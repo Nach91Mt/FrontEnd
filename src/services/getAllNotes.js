@@ -7,3 +7,4 @@ export const getAllNotes = () => {
             return data
         })
 }
+//https://floating-mountain-93526-790e4950c4d4.herokuapp.com/notes

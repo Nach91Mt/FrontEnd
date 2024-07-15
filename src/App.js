@@ -1,44 +1,73 @@
 
 import { Note } from './Note.js'
 import { useState, useEffect } from 'react';
-import axios from 'axios'
-import { getAllNotes } from './services/notes/getAllNotes.js';
-import { createNote } from './services/notes/craeteNote.js';
-
+import { getAllNotes } from './services/getAllNotes.js';
+import createNote from './services/craeteNote.js';
+import loginServices from './services/login.js'
+import NoteForm from './components/NoteForm.js';
+import UserForm from './components/Userform.js';
 function App() {
   const [note, setNote] = useState([]);
   const [loading, setLoading] = useState(false)
-  const [newNote, setNewNote] = useState('')
-  const [newTitle, setNewTitle] = useState('');
   const [error, setError] = useState('')
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value);
-  };
-  const handleChange = (event) => {
-    setNewNote(event.target.value)
+  const [user, setUser] = useState(null)
+
+
+  const handleLogout = () => {
+    setUser('')
+    createNote.setToken(user.token)
+    window.localStorage.removeItem('loggerNoteAppUser')
+    // setUsername('')
   }
-  const handleSubmit = (event) => {
-    event.preventDefault()
+  const LoginSubmit = async ({ username, password }) => {
+    console.log(username)
+    try {
+      const user = await loginServices.login({
+        username,
+        password
+      })
+      console.log(user)
+      createNote.setToken(user.token)
 
-    const noteAdd = {
+      window.localStorage.setItem(
+        'loggerNoteAppUser', JSON.stringify(user)
+      )
 
-      title: newTitle,
-      body: newNote,
-      userId: 1
+      setUser(user)
+
+    } catch (e) {
+      // setUsername(e)
+      // setTimeout(() => {
+      //   setUsername('')
+      // }, 5000);
     }
-    createNote(noteAdd)
-      .then((newNote) => {
-        setNote(prevNote => prevNote.concat(newNote))
+
+  }
+
+
+
+  const addNote = (noteObject) => {
+
+    createNote
+      .createNote(noteObject)
+      .then(returnNote => {
+        setNote(note.concat(returnNote))
       })
       .catch((error) => (
         console.error(error),
         setError('la api ha petado')
       ))
-    setNewTitle('')
-    setNewNote('')
     //setNote([...note, noteAdd])
 
   }
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggerNoteAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      createNote.setToken(user.token)
+    }
+  }, [])
   useEffect(() => {
     setLoading(true)
     setTimeout(() => {
@@ -57,12 +86,20 @@ function App() {
       <strong>{loading ? "Cargando..." : ""}
 
       </strong>
+      <h1>Notes</h1>
+
+      {
+        user
+          ? <NoteForm
+            addNote={addNote}
+            handleLogout={handleLogout}
+          />
+          : <UserForm
+            loginSubmit={LoginSubmit}
+            user={user}
+          />
+      }
       <Note notes={note} />
-      <form onSubmit={handleSubmit}>
-        <input type='text' placeholder='Title' onChange={handleTitleChange} value={newTitle} />
-        <input type='text' onChange={handleChange} value={newNote} />
-        <button type="submit">Agregar Nota</button>
-      </form>
       {error ? error : ''}
     </div>
   );
