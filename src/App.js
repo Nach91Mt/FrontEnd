@@ -20,7 +20,6 @@ function App() {
     // setUsername('')
   }
   const LoginSubmit = async ({ username, password }) => {
-    console.log(username)
     try {
       const user = await loginServices.login({
         username,

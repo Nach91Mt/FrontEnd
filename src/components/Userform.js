@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Togglabe from "./Togglabe";
+import Togglable from "./Togglable";
+import PropTypes from 'prop-types'
 
-export default function UserForm({ loginSubmit }) { // Corrige la desestructuración aquí
+export default function UserForm({ loginSubmit }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLoginSubmit = async (event) => { // No necesitas user aquí
-        event.preventDefault();
+    const handleLoginSubmit = async (event) => {
         loginSubmit({ username, password });
         setUsername(''); // Resetea el username
         setPassword(''); // Resetea el password
@@ -14,7 +14,7 @@ export default function UserForm({ loginSubmit }) { // Corrige la desestructurac
 
     return (
         <div>
-            <Togglabe buttonLabel={'Show login'}>
+            <Togglable buttonLabel={'Show login'}>
                 <form onSubmit={handleLoginSubmit}>
                     <div>
                         <input
@@ -34,7 +34,7 @@ export default function UserForm({ loginSubmit }) { // Corrige la desestructurac
                     </div>
                     <button>Login</button>
                 </form>
-            </Togglabe>
+            </Togglable>
         </div>
     );
 }

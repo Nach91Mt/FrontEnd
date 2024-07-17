@@ -1,4 +1,14 @@
-export const Note = ({ notes }) => notes.map(not =>
-   <div key={not.id}><p><li><strong> {not.content} {not.important}</strong></li></p>
-      {not.body}</div>
-)
+import React from 'react';
+
+export const Note = ({ notes }) =>
+   notes.map(note => (
+      <div key={note.id}>
+         <p>
+            <li>
+               <strong>{note.content}</strong>
+               <strong>{note.important.toString()}</strong>
+            </li>
+         </p>
+         {note.body}
+      </div>
+   ));
